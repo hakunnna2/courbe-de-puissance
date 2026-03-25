@@ -1,0 +1,308 @@
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background-color: #f8fafc; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif; }
+  
+  .turbine-container { max-width: 1200px; margin: 0 auto; padding: 3rem 2rem; }
+  
+  /* Header */
+  .header-section { margin-bottom: 3rem; padding-bottom: 2rem; border-bottom: 2px solid #e2e8f0; }
+  .header-title { font-size: 28px; font-weight: 700; color: #0f766e; margin-bottom: 0.5rem; }
+  .header-subtitle { font-size: 14px; color: #64748b; }
+  
+  /* Metrics - cleaner layout */
+  .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 3rem; }
+  .metric-card { background-color: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 1.75rem; text-align: center; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08); transition: all 0.2s ease; }
+  .metric-card:hover { box-shadow: 0 4px 12px rgba(15, 118, 110, 0.12); border-color: #14b8a6; }
+  .metric-label { font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 12px; }
+  .metric-value { font-size: 32px; font-weight: 700; color: #0f766e; }
+  
+  /* Controls Section */
+  .controls-section { margin-bottom: 3rem; }
+  .section-title { font-size: 16px; font-weight: 700; color: #1e293b; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 10px; }
+  .section-title::before { content: ''; width: 3px; height: 24px; background-color: #0f766e; border-radius: 1.5px; }
+  
+  .controls-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 24px; }
+  .control-group { }
+  .control-label { font-size: 12px; font-weight: 600; color: #334155; margin-bottom: 10px; display: block; }
+  .control-input-wrapper { display: flex; align-items: center; gap: 12px; }
+  .control-input-wrapper input[type="range"] { flex: 1; height: 5px; border-radius: 3px; background: #e2e8f0; outline: none; -webkit-appearance: none; }
+  .control-input-wrapper input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 16px; height: 16px; border-radius: 50%; background: #0f766e; cursor: pointer; box-shadow: 0 2px 6px rgba(15, 118, 110, 0.3); transition: all 0.2s; }
+  .control-input-wrapper input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.15); background: #0d5a52; }
+  .control-input-wrapper input[type="range"]::-moz-range-thumb { width: 16px; height: 16px; border-radius: 50%; background: #0f766e; cursor: pointer; border: none; box-shadow: 0 2px 6px rgba(15, 118, 110, 0.3); transition: all 0.2s; }
+  .control-value { font-size: 13px; font-weight: 600; color: #0f766e; min-width: 50px; text-align: right; font-family: 'Courier New', monospace; }
+  
+  /* Charts */
+  .chart-container { background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 2rem; margin-bottom: 2.5rem; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08); }
+  .chart-title { font-size: 15px; font-weight: 700; color: #1e293b; margin-bottom: 1.5rem; }
+  .chart-wrapper { position: relative; width: 100%; }
+  
+  /* Legend */
+  .legend-group { display: flex; flex-wrap: wrap; gap: 24px; margin-bottom: 1.5rem; font-size: 12px; }
+  .legend-item { display: flex; align-items: center; gap: 8px; color: #475569; font-weight: 500; }
+  .legend-dot { width: 11px; height: 11px; border-radius: 2px; flex-shrink: 0; }
+  .legend-dash { width: 11px; height: 2px; flex-shrink: 0; }
+  
+  /* Formula Box */
+  .formula-box { background-color: #f0fdf4; border: 1px solid #bbf7d0; border-left: 4px solid #0f766e; border-radius: 8px; padding: 1.75rem; margin-bottom: 3rem; }
+  .formula-title { font-weight: 700; color: #0f766e; margin-bottom: 14px; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; }
+  #formula-main { margin: 1.25rem 0; font-size: 1.4rem; }
+  #formula-main .katex { color: #0f766e; font-size: 1.6rem; }
+  #formula-params .katex, #formula-betz .katex { color: #0d5a52; font-size: 0.95rem; }
+  /* Footer */
+  .footer { text-align: center; padding-top: 2rem; margin-top: 3rem; border-top: 1px solid #e2e8f0; font-size: 12px; color: #94a3b8; }
+  .footer-author { font-weight: 600; color: #0f766e; }
+
+</style>
+
+<div class="turbine-container">
+  <div class="header-section">
+    <div class="header-title">Courbe de Puissance Éolienne</div>
+    <div class="header-subtitle">Analyse Weibull & Limite de Betz</div>
+  </div>
+
+  <div class="metrics-grid">
+    <div class="metric-card">
+      <div class="metric-label">Puissance Nominale</div>
+      <div id="p-nom" class="metric-value">2500 kW</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Cp Actuel</div>
+      <div id="cp-val" class="metric-value">0.45</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Rendement / Betz</div>
+      <div id="eff-betz" class="metric-value">75.9%</div>
+    </div>
+  </div>
+
+  <div class="controls-section">
+    <div class="section-title">Paramètres de Conception</div>
+    <div class="controls-grid">
+      <div class="control-group">
+        <label class="control-label">Diamètre Rotor</label>
+        <div class="control-input-wrapper">
+          <input type="range" id="diam" min="50" max="200" value="126" oninput="update()">
+          <span id="diam-out" class="control-value">126 m</span>
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label">Coefficient Cp</label>
+        <div class="control-input-wrapper">
+          <input type="range" id="cp" min="20" max="59" value="45" oninput="update()">
+          <span id="cp-out" class="control-value">0.45</span>
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label">Vitesse Weibull</label>
+        <div class="control-input-wrapper">
+          <input type="range" id="vmean" min="4" max="12" value="8" step="0.5" oninput="update()">
+          <span id="vmean-out" class="control-value">8 m/s</span>
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label">Paramètre k</label>
+        <div class="control-input-wrapper">
+          <input type="range" id="kw" min="1" max="4" value="2" step="0.1" oninput="update()">
+          <span id="kw-out" class="control-value">2.0</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="chart-container">
+    <div class="chart-title">Courbe de Puissance & Distribution Weibull</div>
+    <div class="legend-group">
+      <span class="legend-item"><span class="legend-dot" style="background: #0f766e;"></span>Courbe de puissance P(V)</span>
+      <span class="legend-item"><span class="legend-dot" style="background: #16a34a;"></span>Distribution Weibull f(V)</span>
+      <span class="legend-item"><span class="legend-dash" style="background: #ea580c;"></span>Limite de Betz (59.3%)</span>
+    </div>
+    <div class="chart-wrapper" style="position: relative; height: 320px;">
+      <canvas id="chart1"></canvas>
+    </div>
+  </div>
+
+
+
+  <div class="chart-container">
+    <div class="chart-title">Énergie Produite par Vitesse de Vent</div>
+    <div class="legend-group">
+      <span class="legend-item"><span class="legend-dot" style="background: #65a30d;"></span>E(V) = P(V) × f(V)</span>
+    </div>
+    <div class="chart-wrapper" style="position: relative; height: 240px;">
+      <canvas id="chart2"></canvas>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>Created by <span class="footer-author">Abderrahmane El Haimar</span></p>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<script>
+const RHO = 1.225;
+const BETZ = 0.593;
+
+function gamma(n) {
+  if (n === 1) return 1;
+  if (n === 0.5) return Math.sqrt(Math.PI);
+  const g = [1,1,2,6,24,120];
+  if (Number.isInteger(n) && n < 6) return g[n];
+  let x = n - 1, res = 1;
+  while (x > 1) { res *= x; x -= 1; }
+  return res * Math.sqrt(2 * Math.PI / x) * Math.pow(x / Math.E, x);
+}
+
+function weibull(v, k, c) {
+  if (v <= 0) return 0;
+  return (k / c) * Math.pow(v / c, k - 1) * Math.exp(-Math.pow(v / c, k));
+}
+
+function powerCurve(v, D, cp, vCutIn=3, vNom=12, vCutOut=25) {
+  if (v < vCutIn || v > vCutOut) return 0;
+  const A = Math.PI * Math.pow(D / 2, 2);
+  const Pmax = 0.5 * RHO * A * Math.pow(vNom, 3) * cp;
+  const P = 0.5 * RHO * A * Math.pow(v, 3) * cp;
+  return Math.min(P, Pmax);
+}
+
+function weibullC(vmean, k) {
+  try {
+    const g = gamma(1 + 1/k);
+    return vmean / g;
+  } catch(e) { return vmean / 0.886; }
+}
+
+let chart1, chart2;
+
+function buildCharts() {
+  const vRange = Array.from({length: 30}, (_, i) => i);
+  const D = 126, cpVal = 0.45, vmean = 8, k = 2;
+  const c = weibullC(vmean, k);
+  const A = Math.PI * Math.pow(D/2, 2);
+  const Pnom = 0.5 * RHO * A * Math.pow(12, 3) * cpVal / 1000;
+
+  const pData = vRange.map(v => powerCurve(v, D, cpVal) / 1000);
+  const wData = vRange.map(v => weibull(v, k, c) * 100);
+  const eData = vRange.map(v => (powerCurve(v, D, cpVal) / 1000) * weibull(v, k, c) * 100);
+  const betzLine = vRange.map(v => {
+    if (v < 3 || v > 25) return 0;
+    const Pbetz = 0.5 * RHO * A * Math.pow(v, 3) * BETZ / 1000;
+    return Math.min(Pbetz, Pnom / cpVal * BETZ);
+  });
+
+  const ctx1 = document.getElementById('chart1').getContext('2d');
+  chart1 = new Chart(ctx1, {
+    data: {
+      labels: vRange,
+      datasets: [
+        { type: 'line', label: 'Puissance P(V) kW', data: pData, borderColor: '#0f766e', backgroundColor: 'rgba(15,118,110,0.05)', borderWidth: 3, fill: true, tension: 0.4, pointRadius: 0, pointHoverRadius: 6, yAxisID: 'y' },
+        { type: 'line', label: 'Betz max', data: betzLine, borderColor: '#ea580c', borderWidth: 2, borderDash: [6,4], fill: false, tension: 0.4, pointRadius: 0, yAxisID: 'y' },
+        { type: 'line', label: 'Weibull f(V) %', data: wData, borderColor: '#16a34a', borderWidth: 2.5, fill: false, tension: 0.4, pointRadius: 0, yAxisID: 'y2' },
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: { mode: 'index', intersect: false, backgroundColor: 'rgba(255,255,255,0.95)', titleColor: '#1e293b', bodyColor: '#475569', borderColor: '#e2e8f0', borderWidth: 1, padding: 12, titleFont: { weight: 'bold' }, bodyFont: { size: 12 } } },
+      scales: {
+        x: { title: { display: true, text: 'Vitesse du vent V (m/s)', color: '#64748b', font: { size: 12, weight: 600 } }, ticks: { maxTicksLimit: 10, color: '#64748b' }, grid: { color: 'rgba(226, 232, 240, 0.6)' } },
+        y: { title: { display: true, text: 'Puissance (kW)', color: '#64748b', font: { size: 12, weight: 600 } }, position: 'left', min: 0, ticks: { color: '#64748b' }, grid: { color: 'rgba(226, 232, 240, 0.6)' } },
+        y2: { title: { display: true, text: 'Fréquence Weibull (%)', color: '#64748b', font: { size: 12, weight: 600 } }, position: 'right', min: 0, grid: { drawOnChartArea: false }, ticks: { color: '#64748b' } }
+      }
+    }
+  });
+
+  const ctx2 = document.getElementById('chart2').getContext('2d');
+  chart2 = new Chart(ctx2, {
+    data: {
+      labels: vRange,
+      datasets: [{ type: 'bar', label: 'Énergie E(V)', data: eData, backgroundColor: 'rgba(101, 163, 13, 0.6)', borderColor: '#65a30d', borderWidth: 1, borderRadius: 4, borderSkipped: false }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: { mode: 'index', backgroundColor: 'rgba(255,255,255,0.95)', titleColor: '#1e293b', bodyColor: '#475569', borderColor: '#e2e8f0', borderWidth: 1, padding: 12 } },
+      scales: {
+        x: { title: { display: true, text: 'Vitesse du vent V (m/s)', color: '#64748b', font: { size: 12, weight: 600 } }, ticks: { color: '#64748b' }, grid: { color: 'rgba(226, 232, 240, 0.6)' } },
+        y: { title: { display: true, text: 'Énergie relative', color: '#64748b', font: { size: 12, weight: 600 } }, min: 0, ticks: { color: '#64748b' }, grid: { color: 'rgba(226, 232, 240, 0.6)' } }
+      }
+    }
+  });
+}
+
+function update() {
+  const D = parseInt(document.getElementById('diam').value);
+  const cpPct = parseInt(document.getElementById('cp').value);
+  const vmean = parseFloat(document.getElementById('vmean').value);
+  const k = parseFloat(document.getElementById('kw').value);
+  const cp = cpPct / 100;
+  const c = weibullC(vmean, k);
+  const A = Math.PI * Math.pow(D/2, 2);
+
+  document.getElementById('diam-out').textContent = D + ' m';
+  document.getElementById('cp-out').textContent = cp.toFixed(2);
+  document.getElementById('vmean-out').textContent = vmean + ' m/s';
+  document.getElementById('kw-out').textContent = k.toFixed(1);
+
+  const Pnom = 0.5 * RHO * A * Math.pow(12, 3) * cp / 1000;
+  document.getElementById('p-nom').textContent = Math.round(Pnom) + ' kW';
+  document.getElementById('cp-val').textContent = cp.toFixed(2);
+  document.getElementById('eff-betz').textContent = (cp / BETZ * 100).toFixed(1) + '%';
+
+  const vRange = Array.from({length: 30}, (_, i) => i);
+  const pData = vRange.map(v => powerCurve(v, D, cp) / 1000);
+  const wData = vRange.map(v => weibull(v, k, c) * 100);
+  const eData = vRange.map(v => (powerCurve(v, D, cp) / 1000) * weibull(v, k, c) * 100);
+  const betzLine = vRange.map(v => {
+    if (v < 3 || v > 25) return 0;
+    const Pbetz = 0.5 * RHO * A * Math.pow(v, 3) * BETZ / 1000;
+    return Math.min(Pbetz, Pnom / cp * BETZ);
+  });
+
+  chart1.data.datasets[0].data = pData;
+  chart1.data.datasets[1].data = betzLine;
+  chart1.data.datasets[2].data = wData;
+  chart1.update('none');
+  chart2.data.datasets[0].data = eData;
+  chart2.update('none');
+}
+
+buildCharts();
+
+// Wait for KaTeX to load and render formulas
+document.addEventListener('DOMContentLoaded', function() {
+  setTimeout(renderFormulas, 100);
+});
+
+// Render formulas with KaTeX
+function renderFormulas() {
+  if (typeof katex === 'undefined') {
+    setTimeout(renderFormulas, 100);
+    return;
+  }
+  
+  // Main formula
+  try {
+    katex.render("P = \\frac{1}{2} \\times \\rho \\times A \\times V^3 \\times C_p", document.getElementById('formula-main'), {displayMode: true, throwOnError: false});
+  } catch(e) { console.log('Formula 1 error:', e); }
+  
+  // Parameters
+  try {
+    katex.render("\\rho = 1.225 \\text{ kg/m}^3 \\quad | \\quad A = \\pi \\times \\left(\\frac{D}{2}\\right)^2 \\quad | \\quad C_{p,max} = 0.593", document.getElementById('formula-params'), {displayMode: false, throwOnError: false});
+  } catch(e) { console.log('Formula 2 error:', e); }
+  
+  // Betz limit
+  try {
+    katex.render("\\text{Limite de Betz} = \\frac{16}{27} \\approx 59.3\\%", document.getElementById('formula-betz'), {displayMode: false, throwOnError: false});
+  } catch(e) { console.log('Formula 3 error:', e); }
+}
+
+// Call immediately as well (in case DOMContentLoaded already fired)
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', renderFormulas);
+} else {
+  setTimeout(renderFormulas, 100);
+}
+</script>
