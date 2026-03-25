@@ -23,10 +23,10 @@
   .section-title::before { content: ''; width: 3px; height: 24px; background-color: #0f766e; border-radius: 1.5px; }
   
   .controls-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 24px; }
-  .control-group { }
+  .control-group { min-width: 0; }
   .control-label { font-size: 12px; font-weight: 600; color: #334155; margin-bottom: 10px; display: block; }
   .control-input-wrapper { display: flex; align-items: center; gap: 12px; }
-  .control-input-wrapper input[type="range"] { flex: 1; height: 5px; border-radius: 3px; background: #e2e8f0; outline: none; -webkit-appearance: none; }
+  .control-input-wrapper input[type="range"] { flex: 1; height: 5px; border-radius: 3px; background: #e2e8f0; outline: none; appearance: none; -webkit-appearance: none; }
   .control-input-wrapper input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 16px; height: 16px; border-radius: 50%; background: #0f766e; cursor: pointer; box-shadow: 0 2px 6px rgba(15, 118, 110, 0.3); transition: all 0.2s; }
   .control-input-wrapper input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.15); background: #0d5a52; }
   .control-input-wrapper input[type="range"]::-moz-range-thumb { width: 16px; height: 16px; border-radius: 50%; background: #0f766e; cursor: pointer; border: none; box-shadow: 0 2px 6px rgba(15, 118, 110, 0.3); transition: all 0.2s; }
@@ -52,6 +52,7 @@
   #formula-main { margin: 1.25rem 0; font-size: 1.4rem; }
   #formula-main .katex { color: #0f766e; font-size: 1.6rem; }
   #formula-params .katex, #formula-betz .katex { color: #0d5a52; font-size: 0.95rem; }
+  .formula-params { color: #64748b; font-size: 11px; line-height: 1.6; }
   /* Footer */
   .footer { text-align: center; padding-top: 2rem; margin-top: 3rem; border-top: 1px solid #e2e8f0; font-size: 12px; color: #94a3b8; }
   .footer-author { font-weight: 600; color: #0f766e; }
@@ -158,6 +159,15 @@
     </div>
     <div class="chart-wrapper chart-wrapper-main">
       <canvas id="chart1"></canvas>
+    </div>
+  </div>
+
+  <div class="formula-box">
+    <div class="formula-title">Formule Fondamentale</div>
+    <div id="formula-main"></div>
+    <div class="formula-params">
+      <div id="formula-params" style="margin-bottom: 8px;"></div>
+      <div id="formula-betz"></div>
     </div>
   </div>
 
