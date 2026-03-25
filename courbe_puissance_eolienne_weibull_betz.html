@@ -46,19 +46,9 @@
   .legend-dot { width: 11px; height: 11px; border-radius: 2px; flex-shrink: 0; }
   .legend-dash { width: 11px; height: 2px; flex-shrink: 0; }
   
-  /* Formula Box */
-  .formula-box { background-color: #f0fdf4; border: 1px solid #bbf7d0; border-left: 4px solid #0f766e; border-radius: 8px; padding: 1.75rem; margin-bottom: 3rem; }
-  .formula-title { font-weight: 700; color: #0f766e; margin-bottom: 14px; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; }
-  #formula-main { margin: 1.25rem 0; font-size: 1.4rem; }
-  #formula-main .katex { color: #0f766e; font-size: 1.6rem; }
-  #formula-params .katex, #formula-betz .katex { color: #0d5a52; font-size: 0.95rem; }
-  .formula-params { color: #64748b; font-size: 11px; line-height: 1.6; }
   /* Footer */
   .footer { text-align: center; padding-top: 2rem; margin-top: 3rem; border-top: 1px solid #e2e8f0; font-size: 12px; color: #94a3b8; }
   .footer-author { font-weight: 600; color: #0f766e; }
-
-  /* Formula overflow protection on small screens */
-  #formula-main, #formula-params, #formula-betz { overflow-x: auto; overflow-y: hidden; }
 
   /* Responsive */
   @media (max-width: 992px) {
@@ -162,17 +152,6 @@
     </div>
   </div>
 
-  <div class="formula-box">
-    <div class="formula-title">Formule Fondamentale</div>
-    <div id="formula-main"></div>
-    <div class="formula-params">
-      <div id="formula-params" style="margin-bottom: 8px;"></div>
-      <div id="formula-betz"></div>
-    </div>
-  </div>
-
-
-
   <div class="chart-container">
     <div class="chart-title">Énergie Produite par Vitesse de Vent</div>
     <div class="legend-group">
@@ -189,8 +168,6 @@
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
 <script>
 const RHO = 1.225;
 const BETZ = 0.593;
@@ -319,39 +296,4 @@ function update() {
 }
 
 buildCharts();
-
-// Wait for KaTeX to load and render formulas
-document.addEventListener('DOMContentLoaded', function() {
-  setTimeout(renderFormulas, 100);
-});
-
-// Render formulas with KaTeX
-function renderFormulas() {
-  if (typeof katex === 'undefined') {
-    setTimeout(renderFormulas, 100);
-    return;
-  }
-  
-  // Main formula
-  try {
-    katex.render("P = \\frac{1}{2} \\times \\rho \\times A \\times V^3 \\times C_p", document.getElementById('formula-main'), {displayMode: true, throwOnError: false});
-  } catch(e) { console.log('Formula 1 error:', e); }
-  
-  // Parameters
-  try {
-    katex.render("\\rho = 1.225 \\text{ kg/m}^3 \\quad | \\quad A = \\pi \\times \\left(\\frac{D}{2}\\right)^2 \\quad | \\quad C_{p,max} = 0.593", document.getElementById('formula-params'), {displayMode: false, throwOnError: false});
-  } catch(e) { console.log('Formula 2 error:', e); }
-  
-  // Betz limit
-  try {
-    katex.render("\\text{Limite de Betz} = \\frac{16}{27} \\approx 59.3\\%", document.getElementById('formula-betz'), {displayMode: false, throwOnError: false});
-  } catch(e) { console.log('Formula 3 error:', e); }
-}
-
-// Call immediately as well (in case DOMContentLoaded already fired)
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', renderFormulas);
-} else {
-  setTimeout(renderFormulas, 100);
-}
 </script>
