@@ -36,6 +36,9 @@
   .chart-container { background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 2rem; margin-bottom: 2.5rem; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08); }
   .chart-title { font-size: 15px; font-weight: 700; color: #1e293b; margin-bottom: 1.5rem; }
   .chart-wrapper { position: relative; width: 100%; }
+  .chart-wrapper-main { height: 320px; }
+  .chart-wrapper-energy { height: 240px; }
+  .chart-wrapper canvas { width: 100% !important; height: 100% !important; }
   
   /* Legend */
   .legend-group { display: flex; flex-wrap: wrap; gap: 24px; margin-bottom: 1.5rem; font-size: 12px; }
@@ -52,6 +55,42 @@
   /* Footer */
   .footer { text-align: center; padding-top: 2rem; margin-top: 3rem; border-top: 1px solid #e2e8f0; font-size: 12px; color: #94a3b8; }
   .footer-author { font-weight: 600; color: #0f766e; }
+
+  /* Formula overflow protection on small screens */
+  #formula-main, #formula-params, #formula-betz { overflow-x: auto; overflow-y: hidden; }
+
+  /* Responsive */
+  @media (max-width: 992px) {
+    .turbine-container { padding: 2rem 1.25rem; }
+    .chart-container { padding: 1.5rem; }
+  }
+
+  @media (max-width: 768px) {
+    .turbine-container { padding: 1.25rem 0.875rem; }
+    .header-section { margin-bottom: 2rem; padding-bottom: 1.25rem; }
+    .header-title { font-size: 22px; }
+    .header-subtitle { font-size: 13px; }
+    .metrics-grid { grid-template-columns: 1fr; gap: 12px; margin-bottom: 2rem; }
+    .metric-card { padding: 1.1rem; }
+    .metric-value { font-size: 24px; }
+    .controls-grid { grid-template-columns: 1fr; gap: 14px; }
+    .chart-container { padding: 1rem; margin-bottom: 1.5rem; }
+    .chart-title { font-size: 14px; margin-bottom: 1rem; }
+    .legend-group { gap: 10px; margin-bottom: 1rem; }
+    .legend-item { font-size: 11px; }
+    .chart-wrapper-main { height: 260px; }
+    .chart-wrapper-energy { height: 200px; }
+    .footer { margin-top: 2rem; padding-top: 1.25rem; }
+  }
+
+  @media (max-width: 480px) {
+    .header-title { font-size: 20px; }
+    .section-title { font-size: 14px; margin-bottom: 1rem; }
+    .metric-value { font-size: 21px; }
+    .control-value { font-size: 12px; min-width: 44px; }
+    .chart-wrapper-main { height: 220px; }
+    .chart-wrapper-energy { height: 175px; }
+  }
 
 </style>
 
@@ -117,7 +156,7 @@
       <span class="legend-item"><span class="legend-dot" style="background: #16a34a;"></span>Distribution Weibull f(V)</span>
       <span class="legend-item"><span class="legend-dash" style="background: #ea580c;"></span>Limite de Betz (59.3%)</span>
     </div>
-    <div class="chart-wrapper" style="position: relative; height: 320px;">
+    <div class="chart-wrapper chart-wrapper-main">
       <canvas id="chart1"></canvas>
     </div>
   </div>
@@ -129,7 +168,7 @@
     <div class="legend-group">
       <span class="legend-item"><span class="legend-dot" style="background: #65a30d;"></span>E(V) = P(V) × f(V)</span>
     </div>
-    <div class="chart-wrapper" style="position: relative; height: 240px;">
+    <div class="chart-wrapper chart-wrapper-energy">
       <canvas id="chart2"></canvas>
     </div>
   </div>
